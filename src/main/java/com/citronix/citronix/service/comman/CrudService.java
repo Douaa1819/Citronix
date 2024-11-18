@@ -1,4 +1,4 @@
-package com.citronix.citronix.service.generic;
+package com.citronix.citronix.service.comman;
 
 import java.util.List;
 

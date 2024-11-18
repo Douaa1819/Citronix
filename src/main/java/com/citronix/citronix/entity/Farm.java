@@ -48,4 +48,18 @@ public class Farm {
     @OneToMany(mappedBy = "farm", cascade = CascadeType.ALL)
     private List<Field> fields = new ArrayList<>();
 
+    @Transient
+    public Double calculateFieldsTotalArea() {
+        if (fields == null || fields.isEmpty()) {
+            return 0.0;
+        }
+        return fields.stream()
+                .mapToDouble(Field::getArea)
+                .sum();
+    }
+
+    @Transient
+    public Double getAvailableArea() {
+        return totalArea - calculateFieldsTotalArea();
+    }
 }
