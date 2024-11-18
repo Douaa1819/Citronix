@@ -1,10 +1,7 @@
 package com.citronix.citronix.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,6 +29,7 @@ public class Field {
 
     @NotNull(message = "Area is required ")
     @DecimalMin(value = "0.1", message = "Min area of a field it is 0.1 hectare")
+    @DecimalMax(value = "10", message = "Max area for a field is 10 hectares")
     private Double area;
 
 
