@@ -58,8 +58,5 @@ public class Farm {
                 .sum();
     }
 
-    @Transient
-    public Double getAvailableArea() {
-        return totalArea - calculateFieldsTotalArea();
-    }
+
 }

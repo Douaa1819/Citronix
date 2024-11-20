@@ -27,7 +27,7 @@ public class Tree {
 
     @NotNull(message = "Planting date is required ")
     @Column(name = "planting_date", nullable = false)
-    private LocalDateTime plantingDate;
+    private LocalDate plantingDate;
 
     @ManyToOne
     @JoinColumn(name = "field_id", nullable = false)
@@ -39,10 +39,10 @@ public class Tree {
     private List<HarvestDetails> harvestDetails = new ArrayList<>();
 
     public Integer getAge(){
-        return (int) ChronoUnit.YEARS.between(this.getPlantingDate().toLocalDate(), LocalDate.now());
+        return (int) ChronoUnit.YEARS.between(this.getPlantingDate(), LocalDate.now());
     }
 
-    public Double getAnnualProductivity() {
+    public Double getProductivity() {
         int age = this.getAge();
         if (age < 3) return 2.5;
         else if (age <= 10) return 12.0;
