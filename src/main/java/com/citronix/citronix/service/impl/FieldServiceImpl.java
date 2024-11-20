@@ -49,26 +49,26 @@ public class FieldServiceImpl implements FieldService {
         Farm farm = farmRepository.findById(fieldRequestDTO.farmId())
                 .orElseThrow(() -> new EntityNotFoundException("Farm not found with id: " + fieldRequestDTO.farmId()));
 
-        if (fieldRequestDTO.area() < 0.1) {
-            throw new IllegalArgumentException("Field area must be at least 0.1 hectare");
+        // Validate minimum field size (1,000 m²)
+        if (fieldRequestDTO.area() < 1000) {
+            throw new IllegalArgumentException("Field area must be at least 1,000 m²");
         }
 
         // Validate if the new field's area exceeds 50% of the farm's total area
-        if (fieldRequestDTO.area() > farm.getTotalArea() * 0.5) {
+        if (fieldRequestDTO.area() > farm.getTotalArea() * 10_000 * 0.5) { // Convert hectares to m²
             throw new IllegalArgumentException("Field area cannot exceed 50% of the farm's total area");
         }
 
-        // Validate if the new field's area doesn't exceed farm's remaining area
+        // Validate if the new field's area doesn't exceed the farm's remaining area
         double currentFieldsArea = farm.calculateFieldsTotalArea();
-        if (currentFieldsArea + fieldRequestDTO.area() > farm.getTotalArea()) {
-            throw new IllegalArgumentException("Total field area would exceed farm's total area");
+        if (currentFieldsArea + fieldRequestDTO.area() > farm.getTotalArea() * 10_000) { // Convert hectares to m²
+            throw new IllegalArgumentException("Total field area would exceed the farm's total area");
         }
 
         // Validate the maximum number of fields (10 per farm)
         if (farm.getFields().size() >= 10) {
             throw new IllegalArgumentException("A farm cannot have more than 10 fields");
         }
-
 
         Field field = fieldMapper.toEntity(fieldRequestDTO);
         field.setFarm(farm);
@@ -80,15 +80,15 @@ public class FieldServiceImpl implements FieldService {
     @Override
     @Transactional
     public FieldResponseDTO update(Long id, FieldRequestDTO fieldRequestDTO) {
-        // Find existing field
+
         Field existingField = fieldRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Field not found with id: " + id));
 
-        // Find the farm
+
         Farm farm = farmRepository.findById(fieldRequestDTO.farmId())
                 .orElseThrow(() -> new EntityNotFoundException("Farm not found with id: " + fieldRequestDTO.farmId()));
 
-        // Calculate total area excluding the current field
+        // Calculate total
         double totalAreaExcludingCurrent = farm.calculateFieldsTotalArea() - existingField.getArea();
 
         // Validate minimum field size (1,000 m²)
@@ -97,21 +97,21 @@ public class FieldServiceImpl implements FieldService {
         }
 
         // Validate if the new area exceeds 50% of the farm's total area
-        if (fieldRequestDTO.area() > farm.getTotalArea() * 0.5) {
+        if (fieldRequestDTO.area() > farm.getTotalArea() * 10_000 * 0.5) { // Convert hectares to m²
             throw new IllegalArgumentException("Field area cannot exceed 50% of the farm's total area");
         }
 
         // Validate if the total area (excluding current field) plus the new area exceeds the farm's total area
-        if (totalAreaExcludingCurrent + fieldRequestDTO.area() > farm.getTotalArea()) {
+        if (totalAreaExcludingCurrent + fieldRequestDTO.area() > farm.getTotalArea() * 10_000) { // Convert hectares to m²
             throw new IllegalArgumentException("Updated field area would exceed farm's total area");
         }
 
-        // Update field attributes
+        // Update field
         existingField.setName(fieldRequestDTO.name());
         existingField.setArea(fieldRequestDTO.area());
         existingField.setFarm(farm);
 
-        // Save and return
+
         Field updatedField = fieldRepository.save(existingField);
         return fieldMapper.toResponseDTO(updatedField);
     }

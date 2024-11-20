@@ -28,7 +28,7 @@ public class Field {
     private String name;
 
     @NotNull(message = "Area is required ")
-    @DecimalMin(value = "0.1", message = "Min area of a field is 0.1 hectare")
+    @DecimalMin(value = "1000", message = "Minimum area of a field is 1,000 m²")
     private Double area;
 
     @ManyToOne
