@@ -65,4 +65,12 @@ public class FarmServiceImpl implements FarmService {
     public void delete(Long id) {
         farmRepository.deleteById(id);
     }
+
+    @Override
+    public List<FarmResponseDTO> findFarmsByCriteria(String name, String location) {
+        List<Farm> farms = farmRepository.findFarmsByCriteria(name, location);
+        return farms.stream()
+                .map(farmMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
 }

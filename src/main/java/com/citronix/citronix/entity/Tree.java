@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class Tree {
 
     @NotNull(message = "Planting date is required ")
     @Column(name = "planting_date", nullable = false)
-    private LocalDate plantingDate;
+    private LocalDateTime plantingDate;
 
     @ManyToOne
     @JoinColumn(name = "field_id", nullable = false)
@@ -35,4 +37,16 @@ public class Tree {
     @OneToMany(mappedBy = "tree", cascade = CascadeType.ALL)
     @Builder.Default
     private List<HarvestDetails> harvestDetails = new ArrayList<>();
+
+    public Integer getAge(){
+        return (int) ChronoUnit.YEARS.between(this.getPlantingDate().toLocalDate(), LocalDate.now());
+    }
+
+    public Double getAnnualProductivity() {
+        int age = this.getAge();
+        if (age < 3) return 2.5;
+        else if (age <= 10) return 12.0;
+        else if(age <= 20 ) return 20.0;
+        else return 0.0;
+    }
 }
