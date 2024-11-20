@@ -1,16 +1,20 @@
 package com.citronix.citronix.dto.response;
 
-import lombok.Data;
-
+import com.citronix.citronix.entity.Field;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Data
-public class FarmResponseDTO {
+import lombok.Builder;
 
-    private Long id;
-    private String name;
-    private String location;
-    private Double totalArea;
-    private LocalDate creationDate;
-    //private List<Field> fieldIds;
+@Builder
+public record FarmResponseDTO(
+        Long id,
+        String name,
+        String location,
+        Double totalArea,
+        LocalDate creationDate,
+        List<Long> fieldIds
+) {
+
 }
