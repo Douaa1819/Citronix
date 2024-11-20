@@ -62,5 +62,4 @@ public class Farm {
     public Double getAvailableArea() {
         return totalArea - calculateFieldsTotalArea();
     }
-
 }

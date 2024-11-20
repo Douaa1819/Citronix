@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+
 
 @Data
 @AllArgsConstructor
@@ -18,9 +18,5 @@ public class TreeResponseDTO {
     private Integer age;
     private String productivityCategory;
     private Double expectedYieldPerSeason;
-
-
-
-
-
 }
+
