@@ -48,8 +48,6 @@ public class Farm {
     @OneToMany(mappedBy = "farm", cascade = CascadeType.ALL)
     private List<Field> fields = new ArrayList<>();
 
-<<<<<<< Updated upstream
-=======
     @Transient
     public Double calculateFieldsTotalArea() {
         if (fields == null || fields.isEmpty()) {
@@ -65,6 +63,4 @@ public class Farm {
         return totalArea - calculateFieldsTotalArea();
     }
 
-
->>>>>>> Stashed changes
 }
