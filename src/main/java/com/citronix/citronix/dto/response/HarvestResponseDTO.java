@@ -10,8 +10,7 @@ public record HarvestResponseDTO (
 
      Long id,
      LocalDate harvestDate,
-     Season season,
-     Long fieldId
+     Season season
 
 ){
 

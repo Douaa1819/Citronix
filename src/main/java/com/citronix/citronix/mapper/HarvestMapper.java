@@ -15,9 +15,8 @@ import org.mapstruct.MappingTarget;
         componentModel = "spring"
 )
 public interface HarvestMapper {
-    @Mapping(target = "field", source = "field")
-    Harvest toEntity(HarvestRequestDTO dto,Field field);
 
-    @Mapping(target = "fieldId", source = "field.id")
+    Harvest toEntity(HarvestRequestDTO dto);
+
     HarvestResponseDTO toResponseDTO(Harvest harvest);
 }

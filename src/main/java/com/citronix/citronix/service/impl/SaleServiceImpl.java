@@ -3,6 +3,7 @@ package com.citronix.citronix.service.impl;
 import com.citronix.citronix.dto.request.SaleRequestDTO;
 import com.citronix.citronix.dto.response.SaleResponseDTO;
 import com.citronix.citronix.entity.Harvest;
+import com.citronix.citronix.entity.HarvestDetails;
 import com.citronix.citronix.entity.Sale;
 import com.citronix.citronix.exception.EntityNotFoundException;
 import com.citronix.citronix.mapper.SaleMapper;
@@ -33,18 +34,29 @@ public class SaleServiceImpl implements SaleService {
         Harvest harvest = harvestRepository.findById(requestDTO.harvestId())
                 .orElseThrow(() -> new EntityNotFoundException("Harvest not found"));
 
-        if (harvest.getTotalQuantity() < requestDTO.quantity()) {
-            throw new IllegalArgumentException("Insufficient quantity available in harvest");
+
+        double actualTotalQuantity = calculateTotalQuantity(harvest);
+
+
+        if (actualTotalQuantity < requestDTO.quantity()) {
+            throw new IllegalArgumentException("Insufficient quantity available in harvest: " + actualTotalQuantity);
         }
 
+
         sale.setHarvest(harvest);
-        harvest.setTotalQuantity(harvest.getTotalQuantity() - requestDTO.quantity());
+        harvest.setTotalQuantity(actualTotalQuantity - requestDTO.quantity());
         harvestRepository.save(harvest);
+
 
         Sale savedSale = saleRepository.save(sale);
         return saleMapper.toDTO(savedSale);
     }
 
+    public double calculateTotalQuantity(Harvest harvest) {
+        return harvest.getHarvestDetails().stream()
+                .mapToDouble(HarvestDetails::getQuantity)
+                .sum();
+    }
     @Override
     public SaleResponseDTO getSaleById(Long id) {
         Sale sale = saleRepository.findById(id)
@@ -71,7 +83,7 @@ public class SaleServiceImpl implements SaleService {
                 .orElseThrow(() -> new EntityNotFoundException("Harvest not found"));
 
         if (harvest.getTotalQuantity() < quantityDifference) {
-            throw new IllegalArgumentException("Insufficient quantity available in harvest");
+            throw new IllegalArgumentException("Insufficient quantity available in harvest"+ harvest.getTotalQuantity());
         }
 
         existingSale.setPrixUnitaire(requestDTO.prixUnitaire());

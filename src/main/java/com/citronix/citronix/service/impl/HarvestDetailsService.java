@@ -1,6 +1,7 @@
 package com.citronix.citronix.service.impl;
 
 import com.citronix.citronix.dto.response.HarvestDetailsResponseDTO;
+import com.citronix.citronix.entity.Harvest;
 import com.citronix.citronix.repository.HarvestDetailsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class HarvestDetailsService {
                 ))
                 .collect(Collectors.toList());
     }
+
 
 
 

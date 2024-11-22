@@ -1,6 +1,7 @@
 package com.citronix.citronix.repository;
 
 
+import com.citronix.citronix.entity.Farm;
 import com.citronix.citronix.entity.HarvestDetails;
 import com.citronix.citronix.entity.Tree;
 import com.citronix.citronix.entity.enums.Season;
@@ -14,6 +15,6 @@ public interface HarvestDetailsRepository extends JpaRepository<HarvestDetails, 
     void deleteByHarvestId(Long harvestId);
     List<HarvestDetails> findAll();
     List<HarvestDetails> findByTreeAndHarvestSeason(Tree tree, Season season);
-
+List<HarvestDetails> findByTree_Field_Farm_IdAndAndHarvest_Season(Long farm, Season season);
 
 }

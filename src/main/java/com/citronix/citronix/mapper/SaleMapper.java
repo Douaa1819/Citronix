@@ -13,10 +13,12 @@ public interface SaleMapper {
     @Mapping(target = "id", ignore = true)
     Sale toEntity(SaleRequestDTO dto);
 
-    @Mapping(target = "revenue", expression = "java(calculateRevenue(sale))")
-    @Mapping(target = "harvestId", source = "harvest.id")
-    @Mapping(target = "harvestDate", source = "harvest.harvestDate")
-    @Mapping(target = "season", source = "harvest.season")
+    @Mapping(expression = "java(sale.getQuantity() * sale.getPrixUnitaire())", target = "revenue")
+    @Mapping(source = "sale.quantity", target = "quantity")
+    @Mapping(source = "sale.saleDate", target = "saleDate")
+    @Mapping(source = "sale.prixUnitaire", target = "prixUnitaire")
+    @Mapping(source = "sale.clientName", target = "clientName")
+    @Mapping(source = "sale.harvest.harvestDate", target = "harvestDate")
     SaleResponseDTO toDTO(Sale sale);
 
     @Named("calculateRevenue")

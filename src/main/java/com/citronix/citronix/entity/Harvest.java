@@ -34,9 +34,6 @@ public class Harvest {
     @Enumerated(EnumType.STRING)
     private Season season;
 
-    @ManyToOne
-    @JoinColumn(name = "field_id", nullable = false)
-    private Field field;
 
     @Transient
     private double totalQuantity;
