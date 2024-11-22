@@ -6,17 +6,16 @@ import com.citronix.citronix.entity.Farm;
 import com.citronix.citronix.entity.Field;
 import com.citronix.citronix.mapper.FieldMapper;
 import com.citronix.citronix.repository.FarmRepository;
-import com.citronix.citronix.repository.FarmSearchRepository;
 import com.citronix.citronix.repository.FieldRepository;
 import com.citronix.citronix.service.FieldService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+
+
 
 @Service
 @RequiredArgsConstructor
@@ -44,10 +43,11 @@ public class FieldServiceImpl implements FieldService {
                 .orElseThrow(() -> new EntityNotFoundException("Field not found with id: " + id));
     }
 
+
     @Override
     @Transactional
     public FieldResponseDTO create(FieldRequestDTO fieldRequestDTO) {
-        // Find the farm
+
         Farm farm = farmRepository.findById(fieldRequestDTO.farmId())
                 .orElseThrow(() -> new EntityNotFoundException("Farm not found with id: " + fieldRequestDTO.farmId()));
 
@@ -79,6 +79,8 @@ public class FieldServiceImpl implements FieldService {
         return fieldMapper.toResponseDTO(savedField);
     }
 
+
+
     @Override
     @Transactional
     public FieldResponseDTO update(Long id, FieldRequestDTO fieldRequestDTO) {
@@ -108,7 +110,6 @@ public class FieldServiceImpl implements FieldService {
             throw new IllegalArgumentException("Updated field area would exceed farm's total area");
         }
 
-        // Update field
         existingField.setName(fieldRequestDTO.name());
         existingField.setArea(fieldRequestDTO.area());
         existingField.setFarm(farm);

@@ -42,7 +42,7 @@ public class FarmRepositoryImpl implements FarmSearchRepository {
         if (query != null && !query.isEmpty()) {
             try {
                 Double areaValue = Double.parseDouble(query);
-                areaPredicate = cb.equal(farm.get("area"), areaValue);
+                areaPredicate = cb.equal(farm.get("totalArea"), areaValue);
                 predicates.add(areaPredicate);
             } catch (NumberFormatException e) {
                 areaPredicate = cb.disjunction();

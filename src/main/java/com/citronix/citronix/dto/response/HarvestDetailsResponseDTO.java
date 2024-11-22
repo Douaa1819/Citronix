@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 
 public record HarvestDetailsResponseDTO (
-
      Long harvestId,
      Long treeId,
      Double quantity

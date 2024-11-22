@@ -10,6 +10,8 @@ public record TreeResponseDTO(
         Double productivite
 ) {
 
+
+
     public TreeResponseDTO calculateAgeAndProductivity() {
         if (plantingDate != null) {
             long calculatedAge = ChronoUnit.YEARS.between(plantingDate, LocalDate.now());
@@ -22,12 +24,15 @@ public record TreeResponseDTO(
         return this;
     }
 
+
+
     private Double calculateProductivity(int age) {
         if (age < 3) return 2.5;
         else if (age <= 10) return 12.0;
         else if (age <= 20) return 20.0;
         else return 0.0;
     }
+
 
 
     public static Builder builder() {

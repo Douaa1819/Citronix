@@ -105,11 +105,11 @@ public class HarvestServiceImpl implements HarvestService {
 
     @Override
     public void delete(Long id) {
-        // Step 1: Find the harvest
+
         Harvest harvest = harvestRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Harvest not found with ID: " + id));
 
-        // Step 2: Delete harvest details and harvest
+
         harvestDetailsRepository.deleteByHarvestId(id);
         harvestRepository.delete(harvest);
     }
