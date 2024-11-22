@@ -38,6 +38,7 @@ public class HarvestServiceImpl implements HarvestService {
                 .collect(Collectors.toList());
     }
 
+
     @Override
     public HarvestResponseDTO findById(Long id) {
         Harvest harvest = harvestRepository.findById(id)
@@ -45,27 +46,20 @@ public class HarvestServiceImpl implements HarvestService {
         return harvestMapper.toResponseDTO(harvest);
     }
 
+
     @Override
     public HarvestResponseDTO create(HarvestRequestDTO harvestRequestDTO) {
 
         validateNewHarvest(harvestRequestDTO);
-
-        if (harvestRequestDTO.fieldId() == null) {
-            throw new IllegalArgumentException("Field ID cannot be null");
-        }
-
-
         Field field = fieldRepository.findById(harvestRequestDTO.fieldId())
                 .orElseThrow(() -> new EntityNotFoundException("Field not found with ID: " + harvestRequestDTO.fieldId()));
 
 
         Harvest harvest = harvestMapper.toEntity(harvestRequestDTO, field);
-
         Harvest savedHarvest = harvestRepository.save(harvest);
 
 
         populateHarvestDetails(savedHarvest, field.getTrees());
-
         return harvestMapper.toResponseDTO(savedHarvest);
     }
 
@@ -135,6 +129,7 @@ public class HarvestServiceImpl implements HarvestService {
 
             harvestDetailsRepository.save(harvestDetails);
             totalQuantity += treeProductivity;
+            harvest.setTotalQuantity(totalQuantity);
         }
 
         return totalQuantity;
@@ -151,7 +146,6 @@ public class HarvestServiceImpl implements HarvestService {
                 }
             }
         }
-
 
         validateHarvestDate(requestDTO.harvestDate(), requestDTO.season());
     }
@@ -188,4 +182,22 @@ public class HarvestServiceImpl implements HarvestService {
             case AUTUMN -> month >= 9 && month <= 11;
         };
     }
+
+
+
+
+
+//
+//    public Double calculateTotalQuantityByField(Long fieldId) {
+//        List<Harvest> harvests = harvestRepository.findByFieldId(fieldId);
+//
+//        double totalQuantity = harvests.stream()
+//                .flatMap(harvest -> harvest.getHarvestDetails().stream())
+//                .mapToDouble(HarvestDetails::getQuantity)
+//                .sum();
+//
+//        return totalQuantity;
+//    }
+
+
 }

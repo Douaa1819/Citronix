@@ -2,18 +2,19 @@ package com.citronix.citronix.controller;
 
 import com.citronix.citronix.dto.request.FarmRequestDTO;
 import com.citronix.citronix.dto.response.FarmResponseDTO;
-import com.citronix.citronix.entity.Farm;
 import com.citronix.citronix.exception.EntityNotFoundException;
 import com.citronix.citronix.service.FarmService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @RequiredArgsConstructor
 @RestController
 @Validated
@@ -57,13 +58,11 @@ public class FarmController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFarm(@PathVariable Long id) {
-        try {
+    public ResponseEntity<Map<String, String>> deleteFarm(@PathVariable Long id) {
             farmService.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Farm deleted successfully");
+        return ResponseEntity.ok(response);
     }
 
 

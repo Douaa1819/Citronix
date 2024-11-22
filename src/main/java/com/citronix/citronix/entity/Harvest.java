@@ -38,9 +38,10 @@ public class Harvest {
     @JoinColumn(name = "field_id", nullable = false)
     private Field field;
 
+    @Transient
+    private double totalQuantity;
 
-
-    @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL ,orphanRemoval= true)
     @JsonManagedReference
     private List<HarvestDetails> harvestDetails = new ArrayList<>();
 

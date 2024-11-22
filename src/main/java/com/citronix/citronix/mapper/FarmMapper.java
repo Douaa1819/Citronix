@@ -3,6 +3,7 @@ package com.citronix.citronix.mapper;
 import com.citronix.citronix.dto.request.FarmRequestDTO;
 import com.citronix.citronix.dto.response.FarmFieldResponseDTO;
 import com.citronix.citronix.dto.response.FarmResponseDTO;
+import com.citronix.citronix.dto.response.FieldFarmResponseDTO;
 import com.citronix.citronix.entity.Farm;
 import com.citronix.citronix.entity.Field;
 import org.mapstruct.Mapper;
@@ -18,16 +19,14 @@ import java.util.stream.Collectors;
 @Component
 public interface FarmMapper {
 
-    @Mapping(target = "fieldsId", expression = "java(getFieldsIds(farm))")
+    @Mapping(target = "fields", source = "fields")
     FarmResponseDTO toResponseDTO(Farm farm);
 
 
     Farm toEntity(FarmRequestDTO farmRequestDTO);
 
-    void updateFarmFromDto(FarmRequestDTO farmRequestDto, @MappingTarget Farm farm);
-    default List<Long> getFieldsIds(Farm farm) {
-        return farm.getFields().stream()
-                .map(Field::getId)
-                .collect(Collectors.toList());
+    default FieldFarmResponseDTO mapFieldToFieldFarmResponseDTO(Field field) {
+        return new FieldFarmResponseDTO(field.getId(), field.getName(), field.getArea());
     }
-}
+    void updateFarmFromDto(FarmRequestDTO farmRequestDto, @MappingTarget Farm farm);
+    }
