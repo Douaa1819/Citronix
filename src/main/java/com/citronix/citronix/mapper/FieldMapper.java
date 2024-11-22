@@ -1,30 +1,35 @@
 package com.citronix.citronix.mapper;
 
 import com.citronix.citronix.dto.request.FieldRequestDTO;
+import com.citronix.citronix.dto.response.FarmFieldResponseDTO;
+import com.citronix.citronix.dto.response.FarmResponseDTO;
 import com.citronix.citronix.dto.response.FieldResponseDTO;
 import com.citronix.citronix.dto.response.TreeResponseDTO;
+import com.citronix.citronix.entity.Farm;
 import com.citronix.citronix.entity.Field;
 import com.citronix.citronix.entity.Tree;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface FieldMapper {
-    // Mapping for Field -> FieldResponseDTO
+
     @Mapping(target = "trees", source = "trees")
+    @Mapping(target = "farm", source = "farm")
     FieldResponseDTO toResponseDTO(Field field);
-
-    // Mapping for List<Field> -> List<FieldResponseDTO>
-    List<FieldResponseDTO> toResponseDTOs(List<Field> fields);
-
-    // Mapping for FieldRequestDTO -> Field
     Field toEntity(FieldRequestDTO fieldRequestDTO);
 
-    // Mapping for Tree -> TreeResponseDTO
-    TreeResponseDTO toTreeResponseDTO(Tree tree);
 
-    // Mapping for List<Tree> -> List<TreeResponseDTO>
+
+
+    TreeResponseDTO toTreeResponseDTO(Tree tree);
     List<TreeResponseDTO> toTreeResponseDTOs(List<Tree> trees);
+
+    FarmFieldResponseDTO toResponse(Farm farm);
+
+
+
 }

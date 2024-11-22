@@ -7,13 +7,13 @@ public record TreeResponseDTO(
         Long id,
         LocalDate plantingDate,
         Integer age,
-        Double expectedYieldPerSeason
+        Double productivite
 ) {
 
     public TreeResponseDTO calculateAgeAndProductivity() {
         if (plantingDate != null) {
             long calculatedAge = ChronoUnit.YEARS.between(plantingDate, LocalDate.now());
-            Integer calculatedAgeInt = (int) calculatedAge; // Calcul de l'âge
+            Integer calculatedAgeInt = (int) calculatedAge;
             Double calculatedProductivity = calculateProductivity(calculatedAgeInt);
 
 
@@ -22,7 +22,6 @@ public record TreeResponseDTO(
         return this;
     }
 
-    // Méthode pour calculer la productivité selon l'âge
     private Double calculateProductivity(int age) {
         if (age < 3) return 2.5;
         else if (age <= 10) return 12.0;
@@ -30,7 +29,7 @@ public record TreeResponseDTO(
         else return 0.0;
     }
 
-    // Builder pour TreeResponseDTO
+
     public static Builder builder() {
         return new Builder();
     }
@@ -39,8 +38,7 @@ public record TreeResponseDTO(
         private Long id;
         private LocalDate plantingDate;
         private Integer age;
-        private String productivityCategory;
-        private Double expectedYieldPerSeason;
+        private Double productivite;
 
 
         public Builder id(Long id) {
@@ -62,9 +60,9 @@ public record TreeResponseDTO(
             if (plantingDate != null) {
                 long calculatedAge = ChronoUnit.YEARS.between(plantingDate, LocalDate.now());
                 this.age = (int) calculatedAge;
-                this.expectedYieldPerSeason = calculateProductivity((int) calculatedAge);
+                this.productivite = calculateProductivity((int) calculatedAge);
             }
-            return new TreeResponseDTO(id, plantingDate, age, expectedYieldPerSeason);
+            return new TreeResponseDTO(id, plantingDate, age, productivite);
         }
 
         private Double calculateProductivity(int age) {
