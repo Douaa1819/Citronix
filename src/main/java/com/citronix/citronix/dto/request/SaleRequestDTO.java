@@ -22,5 +22,4 @@ public record SaleRequestDTO (
     @NotNull(message = "Client name is required")
          String clientName
 ){
-
 }

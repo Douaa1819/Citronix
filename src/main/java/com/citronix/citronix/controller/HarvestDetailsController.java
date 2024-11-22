@@ -1,8 +1,7 @@
 package com.citronix.citronix.controller;
 
 import com.citronix.citronix.dto.response.HarvestDetailsResponseDTO;
-import com.citronix.citronix.entity.HarvestDetails;
-import com.citronix.citronix.service.HarvestDetailsService;
+import com.citronix.citronix.service.impl.HarvestDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

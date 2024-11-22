@@ -17,9 +17,10 @@ import java.util.List;
 
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+
 public class Farm {
 
     @Id
@@ -45,7 +46,7 @@ public class Farm {
     private LocalDate creationDate;
 
 
-    @OneToMany(mappedBy = "farm", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "farm", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Field> fields = new ArrayList<>();
 
 

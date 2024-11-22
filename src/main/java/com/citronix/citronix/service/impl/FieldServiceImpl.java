@@ -51,23 +51,22 @@ public class FieldServiceImpl implements FieldService {
         Farm farm = farmRepository.findById(fieldRequestDTO.farmId())
                 .orElseThrow(() -> new EntityNotFoundException("Farm not found with id: " + fieldRequestDTO.farmId()));
 
-        // Validate minimum field size (1,000 m²)
+
         if (fieldRequestDTO.area() < 1000) {
             throw new IllegalArgumentException("Field area must be at least 1,000 m²");
         }
 
-        // Validate if the new field's area exceeds 50% of the farm's total area
-        if (fieldRequestDTO.area() > farm.getTotalArea() * 10_000 * 0.5) { // Convert hectares to m²
+        if (fieldRequestDTO.area() > farm.getTotalArea() * 0.5) {
             throw new IllegalArgumentException("Field area cannot exceed 50% of the farm's total area");
         }
 
-        // Validate if the new field's area doesn't exceed the farm's remaining area
+
         double currentFieldsArea = farm.calculateFieldsTotalArea();
-        if (currentFieldsArea + fieldRequestDTO.area() > farm.getTotalArea() * 10_000) { // Convert hectares to m²
+        if (currentFieldsArea + fieldRequestDTO.area() > farm.getTotalArea() ) {
             throw new IllegalArgumentException("Total field area would exceed the farm's total area");
         }
 
-        // Validate the maximum number of fields (10 per farm)
+
         if (farm.getFields().size() >= 10) {
             throw new IllegalArgumentException("A farm cannot have more than 10 fields");
         }

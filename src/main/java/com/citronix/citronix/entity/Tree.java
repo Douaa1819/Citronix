@@ -33,7 +33,7 @@ public class Tree {
     @NotNull
     private Field field;
 
-    @OneToMany(mappedBy = "tree", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "tree", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<HarvestDetails> harvestDetails = new ArrayList<>();
 
