@@ -6,6 +6,7 @@ import com.citronix.citronix.entity.Farm;
 import com.citronix.citronix.entity.Field;
 import com.citronix.citronix.mapper.FieldMapper;
 import com.citronix.citronix.repository.FarmRepository;
+import com.citronix.citronix.repository.FarmSearchRepository;
 import com.citronix.citronix.repository.FieldRepository;
 import com.citronix.citronix.service.FieldService;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,6 +25,7 @@ public class FieldServiceImpl implements FieldService {
     private final FieldRepository fieldRepository;
     private final FarmRepository farmRepository;
     private final FieldMapper fieldMapper;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -125,4 +127,6 @@ public class FieldServiceImpl implements FieldService {
 
         fieldRepository.delete(field);
     }
+
+
 }

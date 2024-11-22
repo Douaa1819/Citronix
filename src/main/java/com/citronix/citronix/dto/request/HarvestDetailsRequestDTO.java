@@ -7,19 +7,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class HarvestDetailsRequestDTO {
+public record HarvestDetailsRequestDTO (
 
     @NotNull(message = "Harvest ID is required")
-    private Long harvestId;
+     Long harvestId,
 
     @NotNull(message = "Tree ID is required")
-    private Long treeId;
+     Long treeId,
 
     @NotNull(message = "Quantity is required")
     @PositiveOrZero(message = "Quantity cannot be negative")
-    private Double quantity;
+     Double quantity
+){
 }

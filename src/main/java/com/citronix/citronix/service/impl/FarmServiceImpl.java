@@ -7,6 +7,7 @@ import com.citronix.citronix.entity.Field;
 import com.citronix.citronix.exception.EntityNotFoundException;
 import com.citronix.citronix.mapper.FarmMapper;
 import com.citronix.citronix.repository.FarmRepository;
+import com.citronix.citronix.repository.FarmSearchRepository;
 import com.citronix.citronix.service.FarmService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class FarmServiceImpl implements FarmService {
 
     private final FarmRepository farmRepository;
     private final FarmMapper farmMapper;
+    private final FarmSearchRepository searchRepository;
 
 
 
@@ -72,8 +74,9 @@ public class FarmServiceImpl implements FarmService {
     }
 
     @Override
-    public List<FarmResponseDTO> findFarmsByCriteria(String name, String location) {
-        List<Farm> farms = farmRepository.findFarmsByCriteria(name, location);
+    public List<FarmResponseDTO> searchFarms(String query) {
+        List<Farm> farms = searchRepository.findFarmMultiCriteriaSearch(query);
+
         return farms.stream()
                 .map(farmMapper::toResponseDTO)
                 .collect(Collectors.toList());

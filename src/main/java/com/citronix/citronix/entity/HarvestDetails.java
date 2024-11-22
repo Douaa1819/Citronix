@@ -1,6 +1,6 @@
 package com.citronix.citronix.entity;
-
-import com.citronix.citronix.entity.embedded.HarvestDetailsId;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -16,21 +16,21 @@ import lombok.NoArgsConstructor;
 @Builder
 public class HarvestDetails {
 
-    @EmbeddedId
-    private HarvestDetailsId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @ManyToOne
-    @MapsId("harvestId")
-    @JoinColumn(name = "harvest_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "harvest_id", nullable = false)
+    @JsonBackReference
     private Harvest harvest;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("treeId")
-    @JoinColumn(name = "tree_id")
+    @JoinColumn(name = "tree_id", nullable = false)
+    @JsonIgnore
     private Tree tree;
 
     @NotNull(message = "Quantity required")
     @PositiveOrZero
     private Double quantity;
-
 }

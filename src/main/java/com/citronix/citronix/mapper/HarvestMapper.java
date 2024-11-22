@@ -3,30 +3,21 @@ import com.citronix.citronix.dto.request.HarvestDetailsRequestDTO;
 import com.citronix.citronix.dto.request.HarvestRequestDTO;
 import com.citronix.citronix.dto.response.HarvestDetailsResponseDTO;
 import com.citronix.citronix.dto.response.HarvestResponseDTO;
+import com.citronix.citronix.entity.Field;
 import com.citronix.citronix.entity.Harvest;
 import com.citronix.citronix.entity.HarvestDetails;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.MappingTarget;
 
-import java.util.List;
 
 @Mapper(
-        componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.IGNORE
+        componentModel = "spring"
 )
 public interface HarvestMapper {
+    @Mapping(target = "field", source = "field")
+    Harvest toEntity(HarvestRequestDTO dto,Field field);
 
-    @Mapping(target = "harvestDetails", source = "harvestDetails")
+    @Mapping(target = "fieldId", source = "field.id")
     HarvestResponseDTO toResponseDTO(Harvest harvest);
-
-    Harvest toEntity(HarvestRequestDTO requestDTO);
-
-    @Mapping(target = "harvestId", source = "details.id.harvestId")
-    @Mapping(target = "treeId", source = "details.id.treeId")
-    HarvestDetailsResponseDTO toResponseDTO(HarvestDetails details);
-
-    HarvestDetails toEntity(HarvestDetailsRequestDTO requestDTO);
-
-    List<HarvestDetailsResponseDTO> toHarvestDetailsResponseDTOList(List<HarvestDetails> details);
 }

@@ -2,27 +2,23 @@ package com.citronix.citronix.dto.request;
 
 import com.citronix.citronix.entity.enums.Season;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class HarvestRequestDTO {
-
+public record HarvestRequestDTO(
     @NotNull(message = "Harvest date is required")
-    private LocalDate harvestDate;
+     LocalDate harvestDate,
 
     @NotNull(message = "Season is required")
-    private Season season;
+     Season season,
 
-    @NotNull(message = "Total quantity is required")
-    @PositiveOrZero(message = "Total quantity cannot be negative")
-    private Double totalQuantity;
+        @NotNull(message = "Field ID is required")
+            Long fieldId
+
+)
+{
 }

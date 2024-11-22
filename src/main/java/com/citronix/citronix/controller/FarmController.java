@@ -2,6 +2,7 @@ package com.citronix.citronix.controller;
 
 import com.citronix.citronix.dto.request.FarmRequestDTO;
 import com.citronix.citronix.dto.response.FarmResponseDTO;
+import com.citronix.citronix.entity.Farm;
 import com.citronix.citronix.exception.EntityNotFoundException;
 import com.citronix.citronix.service.FarmService;
 import jakarta.validation.Valid;
@@ -65,14 +66,15 @@ public class FarmController {
         }
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<FarmResponseDTO>> searchFarms(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String location
-    ) {
-        List<FarmResponseDTO> farms = farmService.findFarmsByCriteria(name, location);
-        return ResponseEntity.ok(farms);
-    }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<FarmResponseDTO>> searchFarms(@RequestParam String query) {
+        try {
+            List<FarmResponseDTO> farms = farmService.searchFarms(query);
+            return new ResponseEntity<>(farms, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }

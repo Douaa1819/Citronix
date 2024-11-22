@@ -2,6 +2,7 @@ package com.citronix.citronix.entity;
 
 
 import com.citronix.citronix.entity.enums.Season;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -33,12 +34,14 @@ public class Harvest {
     @Enumerated(EnumType.STRING)
     private Season season;
 
-    @NotNull(message = "Total quantity required")
-    @PositiveOrZero
-    @Column(name = "total_quantity", nullable = false)
-    private Double totalQuantity;
+    @ManyToOne
+    @JoinColumn(name = "field_id", nullable = false)
+    private Field field;
+
+
 
     @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<HarvestDetails> harvestDetails = new ArrayList<>();
 
 }

@@ -7,8 +7,7 @@ public record FieldResponseDTO(
         String name,
         Double area,
         List<TreeResponseDTO> trees,
-        int treeCount,
-        Double treeDensity
+        FarmFieldResponseDTO farm
 ) {
 
 }
