@@ -1,6 +1,6 @@
 package com.citronix.citronix.dto.response;
 
-public record FieldFarmResponseDTO(
+public record EmbeddedFieldFarmResponseDTO(
     Long id,
     String name,
     Double area

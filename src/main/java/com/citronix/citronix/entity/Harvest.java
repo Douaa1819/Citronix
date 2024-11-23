@@ -38,6 +38,9 @@ public class Harvest {
     @Transient
     private double totalQuantity;
 
+    @ManyToOne
+    private Farm farm;
+
     @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL ,orphanRemoval= true)
     @JsonManagedReference
     private List<HarvestDetails> harvestDetails = new ArrayList<>();

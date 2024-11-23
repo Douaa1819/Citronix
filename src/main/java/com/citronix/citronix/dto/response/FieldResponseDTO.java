@@ -7,7 +7,7 @@ public record FieldResponseDTO(
         String name,
         Double area,
         List<TreeResponseDTO> trees,
-        FarmFieldResponseDTO farm
+        EmbeddedFarmFieldResponseDTO farm
 ) {
 
 }

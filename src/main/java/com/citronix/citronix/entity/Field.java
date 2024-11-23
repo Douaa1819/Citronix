@@ -37,4 +37,6 @@ public class Field {
 
     @OneToMany(mappedBy = "field", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tree> trees = new ArrayList<>();
+
+
 }

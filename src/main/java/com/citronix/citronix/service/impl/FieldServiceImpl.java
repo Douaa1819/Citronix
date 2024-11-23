@@ -1,5 +1,6 @@
 package com.citronix.citronix.service.impl;
 
+import com.citronix.citronix.common.exception.EntityNotFoundException;
 import com.citronix.citronix.dto.request.FieldRequestDTO;
 import com.citronix.citronix.dto.response.FieldResponseDTO;
 import com.citronix.citronix.entity.Farm;
@@ -8,16 +9,19 @@ import com.citronix.citronix.mapper.FieldMapper;
 import com.citronix.citronix.repository.FarmRepository;
 import com.citronix.citronix.repository.FieldRepository;
 import com.citronix.citronix.service.FieldService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 
+
+@Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class FieldServiceImpl implements FieldService {
 
@@ -27,20 +31,16 @@ public class FieldServiceImpl implements FieldService {
 
 
     @Override
-    @Transactional(readOnly = true)
-    public List<FieldResponseDTO> findAll() {
-        return fieldRepository.findAll()
-                .stream()
-                .map(fieldMapper::toResponseDTO)
-                .collect(Collectors.toList());
+    public Page<FieldResponseDTO> findAll(int pageNum, int pageSize) {
+        return fieldRepository.findAll(PageRequest.of(pageNum, pageSize))
+                .map(fieldMapper::toResponseDTO);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public FieldResponseDTO findById(Long id) {
         return fieldRepository.findById(id)
                 .map(fieldMapper::toResponseDTO)
-                .orElseThrow(() -> new EntityNotFoundException("Field not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Field" , id));
     }
 
 
@@ -49,7 +49,7 @@ public class FieldServiceImpl implements FieldService {
     public FieldResponseDTO create(FieldRequestDTO fieldRequestDTO) {
 
         Farm farm = farmRepository.findById(fieldRequestDTO.farmId())
-                .orElseThrow(() -> new EntityNotFoundException("Farm not found with id: " + fieldRequestDTO.farmId()));
+                .orElseThrow(() -> new EntityNotFoundException("Farm  " , fieldRequestDTO.farmId()));
 
 
         if (fieldRequestDTO.area() < 1000) {
@@ -58,12 +58,6 @@ public class FieldServiceImpl implements FieldService {
 
         if (fieldRequestDTO.area() > farm.getTotalArea() * 0.5) {
             throw new IllegalArgumentException("Field area cannot exceed 50% of the farm's total area");
-        }
-
-
-        double currentFieldsArea = farm.calculateFieldsTotalArea();
-        if (currentFieldsArea + fieldRequestDTO.area() > farm.getTotalArea() ) {
-            throw new IllegalArgumentException("Total field area would exceed the farm's total area");
         }
 
 
@@ -85,14 +79,13 @@ public class FieldServiceImpl implements FieldService {
     public FieldResponseDTO update(Long id, FieldRequestDTO fieldRequestDTO) {
 
         Field existingField = fieldRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Field not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Field " , id));
 
 
         Farm farm = farmRepository.findById(fieldRequestDTO.farmId())
-                .orElseThrow(() -> new EntityNotFoundException("Farm not found with id: " + fieldRequestDTO.farmId()));
+                .orElseThrow(() -> new EntityNotFoundException("Farm " , fieldRequestDTO.farmId()));
 
-        // Calculate total
-        double totalAreaExcludingCurrent = farm.calculateFieldsTotalArea() - existingField.getArea();
+
 
         // Validate minimum field size (1,000 m²)
         if (fieldRequestDTO.area() < 1000) {
@@ -100,14 +93,10 @@ public class FieldServiceImpl implements FieldService {
         }
 
         // Validate if the new area exceeds 50% of the farm's total area
-        if (fieldRequestDTO.area() > farm.getTotalArea() * 10_000 * 0.5) { // Convert hectares to m²
+        if (fieldRequestDTO.area() > farm.getTotalArea()  * 0.5) {
             throw new IllegalArgumentException("Field area cannot exceed 50% of the farm's total area");
         }
 
-        // Validate if the total area (excluding current field) plus the new area exceeds the farm's total area
-        if (totalAreaExcludingCurrent + fieldRequestDTO.area() > farm.getTotalArea() * 10_000) { // Convert hectares to m²
-            throw new IllegalArgumentException("Updated field area would exceed farm's total area");
-        }
 
         existingField.setName(fieldRequestDTO.name());
         existingField.setArea(fieldRequestDTO.area());
@@ -123,7 +112,7 @@ public class FieldServiceImpl implements FieldService {
     @Transactional
     public void delete(Long id) {
         Field field = fieldRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Field not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Field " ,id));
 
         fieldRepository.delete(field);
     }

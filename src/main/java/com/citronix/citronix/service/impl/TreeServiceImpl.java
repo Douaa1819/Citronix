@@ -4,7 +4,7 @@ import com.citronix.citronix.dto.request.TreeRequestDTO;
 import com.citronix.citronix.dto.response.TreeResponseDTO;
 import com.citronix.citronix.entity.Field;
 import com.citronix.citronix.entity.Tree;
-import com.citronix.citronix.exception.EntityNotFoundException;
+import com.citronix.citronix.common.exception.EntityNotFoundException;
 import com.citronix.citronix.mapper.TreeMapper;
 import com.citronix.citronix.repository.FieldRepository;
 import com.citronix.citronix.repository.TreeRepository;
@@ -12,6 +12,8 @@ import com.citronix.citronix.service.TreeService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,16 +29,15 @@ public class TreeServiceImpl implements TreeService {
     private final FieldRepository fieldRepository;
 
     @Override
-    public List<TreeResponseDTO> findAll() {
-        return treeRepository.findAll().stream()
-                .map(tree -> treeMapper.toResponseDTO(tree).calculateAgeAndProductivity())
-                .collect(Collectors.toList());
+    public Page<TreeResponseDTO> findAll(int page, int size) {
+        return treeRepository.findAll(PageRequest.of(page,size))
+                .map(treeMapper::toResponseDTO);
     }
 
     @Override
     public TreeResponseDTO findById(Long id) {
         Tree tree = treeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tree not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Tree ", id));
 
         return treeMapper.toResponseDTO(tree).calculateAgeAndProductivity();
     }
@@ -58,7 +59,7 @@ public class TreeServiceImpl implements TreeService {
         validateTreeRequest(treeRequestDTO);
 
         Tree existingTree = treeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tree not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Tree " , id));
 
         Field field = getFieldById(treeRequestDTO.fieldId());
         existingTree.setPlantingDate(treeRequestDTO.plantingDate());
@@ -71,7 +72,7 @@ public class TreeServiceImpl implements TreeService {
     @Override
     public void delete(Long id) {
         Tree tree = treeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tree not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Tree", id));
 
         treeRepository.delete(tree);
     }
@@ -89,6 +90,6 @@ public class TreeServiceImpl implements TreeService {
 
     private Field getFieldById(Long fieldId) {
         return fieldRepository.findById(fieldId)
-                .orElseThrow(() -> new IllegalArgumentException("Field not found with ID: " + fieldId));
+                .orElseThrow(() -> new EntityNotFoundException("Field " , fieldId));
     }
 }

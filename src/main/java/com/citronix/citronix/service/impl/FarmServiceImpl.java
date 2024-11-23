@@ -1,23 +1,29 @@
 package com.citronix.citronix.service.impl;
 
+import com.citronix.citronix.common.exception.EntityConstraintViolationException;
 import com.citronix.citronix.dto.request.FarmRequestDTO;
 import com.citronix.citronix.dto.response.FarmResponseDTO;
 import com.citronix.citronix.entity.Farm;
 import com.citronix.citronix.entity.Field;
-import com.citronix.citronix.exception.EntityNotFoundException;
+import com.citronix.citronix.common.exception.EntityNotFoundException;
 import com.citronix.citronix.mapper.FarmMapper;
 import com.citronix.citronix.repository.FarmRepository;
 import com.citronix.citronix.repository.FarmSearchRepository;
 import com.citronix.citronix.service.FarmService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class FarmServiceImpl implements FarmService {
 
@@ -36,12 +42,9 @@ public class FarmServiceImpl implements FarmService {
 
 
     @Override
-    public List<FarmResponseDTO> findAll() {
-        return farmRepository.findAll().stream()
-                .map(farmMapper::toResponseDTO)
-                .collect(Collectors.toList());
+    public Page<FarmResponseDTO> findAll (int pageNum, int pageSize ) {
+        return farmRepository.findAll(PageRequest.of(pageNum, pageSize)).map(farmMapper::toResponseDTO);
     }
-
     /**
      * Finds a farm by its ID.
      *
@@ -56,7 +59,7 @@ public class FarmServiceImpl implements FarmService {
     @Override
     public FarmResponseDTO findById(Long id) {
         Optional<Farm> farmOptional = farmRepository.findById(id);
-        return farmOptional.map(farmMapper::toResponseDTO).orElse(null);
+        return farmOptional.map(farmMapper::toResponseDTO).orElseThrow(() -> new EntityNotFoundException("Farm", id));
     }
 
 
@@ -71,16 +74,15 @@ public class FarmServiceImpl implements FarmService {
      * @return a `FarmResponseDTO` representing the saved farm.
      */
 
-    @Transactional
+
     @Override
     public FarmResponseDTO create(FarmRequestDTO farmRequestDTO) {
+
+        if (farmRequestDTO.totalArea() < 2000) {
+            throw new EntityConstraintViolationException("Farm", "Surface", farmRequestDTO.totalArea(), "Farm surface must be at least 2,000 m².");
+        }
         Farm farm = farmMapper.toEntity(farmRequestDTO);
         Farm savedFarm = farmRepository.save(farm);
-        if (farm.getFields() != null) {
-            for (Field field : farm.getFields()) {
-                field.setFarm(farm);
-            }
-        }
 
         return farmMapper.toResponseDTO(savedFarm);
     }
@@ -101,16 +103,36 @@ public class FarmServiceImpl implements FarmService {
 
     @Override
     public FarmResponseDTO update(Long id, FarmRequestDTO farmRequestDTO) {
-        Optional<Farm> farmOptional = farmRepository.findById(id);
-        if (farmOptional.isPresent()) {
-            Farm farm = farmOptional.get();
-            farmMapper.updateFarmFromDto(farmRequestDTO, farm);
-            Farm UpdatedFarm = farmRepository.save(farm);
-            return farmMapper.toResponseDTO(UpdatedFarm);
-        }else {
-            throw new EntityNotFoundException("Farm not found with ID: " + id);
+        if (farmRequestDTO.totalArea() < 2000) {
+            throw new EntityConstraintViolationException(
+                    "Farm",
+                    "Total Area",
+                    farmRequestDTO.totalArea(),
+                    "Farm surface must be at least 2,000 m²."
+            );
         }
+
+
+        Farm farm = farmRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Farm" , id));
+
+        if (farmRequestDTO.name() != null && !farmRequestDTO.name().isEmpty()) {
+            farm.setName(farmRequestDTO.name());
+        }
+        if (farmRequestDTO.location() != null && !farmRequestDTO.location().isEmpty()) {
+            farm.setLocation(farmRequestDTO.location());
+        }
+        if (farmRequestDTO.totalArea() != null) {
+            farm.setTotalArea(farmRequestDTO.totalArea());
+        }
+        if (farmRequestDTO.creationDate() != null) {
+            farm.setCreationDate(farmRequestDTO.creationDate());
+        }
+        Farm updatedFarm = farmRepository.save(farm);
+
+        return farmMapper.toResponseDTO(updatedFarm);
     }
+
 
     /**
      * Deletes a farm by its ID.
@@ -126,7 +148,7 @@ public class FarmServiceImpl implements FarmService {
     @Transactional
     public void delete(Long id) {
         Farm farm = farmRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Farm not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Farm " , id));
         farmRepository.delete(farm);
     }
 

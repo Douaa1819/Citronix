@@ -5,6 +5,8 @@ import com.citronix.citronix.dto.response.FieldResponseDTO;
 import com.citronix.citronix.service.FieldService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,15 +18,17 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/fields")
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Validated
 public class FieldController {
 
     private final FieldService fieldService;
 
     @GetMapping
-    public ResponseEntity<List<FieldResponseDTO>> getAllFields() {
-        return ResponseEntity.ok(fieldService.findAll());
+    public ResponseEntity<Page<FieldResponseDTO>> getAllFields(
+        @RequestParam(defaultValue = "0") Integer pageNum,
+        @RequestParam(defaultValue = "10") Integer pageSize){
+        return ResponseEntity.ok(fieldService.findAll(pageNum,pageSize));
     }
 
     @GetMapping("/{id}")
