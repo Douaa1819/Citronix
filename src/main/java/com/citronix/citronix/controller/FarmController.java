@@ -2,10 +2,11 @@ package com.citronix.citronix.controller;
 
 import com.citronix.citronix.dto.request.FarmRequestDTO;
 import com.citronix.citronix.dto.response.FarmResponseDTO;
-import com.citronix.citronix.exception.EntityNotFoundException;
+import com.citronix.citronix.common.exception.EntityNotFoundException;
 import com.citronix.citronix.service.FarmService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,15 +18,17 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@Validated
 @RequestMapping("api/v1/farms")
+@Validated
 public class FarmController {
 
     private  final FarmService farmService;
 
     @GetMapping
-    public ResponseEntity<List<FarmResponseDTO>> getAllFarms() {
-        List<FarmResponseDTO> farms = farmService.findAll();
+    public ResponseEntity<Page<FarmResponseDTO>> getAllFarms(
+        @RequestParam(defaultValue = "0") Integer pageNum,
+        @RequestParam(defaultValue = "10") Integer pageSize){
+        Page<FarmResponseDTO> farms = farmService.findAll(pageNum,pageSize);
         return ResponseEntity.ok(farms);
     }
 
@@ -35,25 +38,21 @@ public class FarmController {
         if (farm == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(farm);
+        return ResponseEntity.status(HttpStatus.OK).body(farm);
     }
 
     @PostMapping
-    public ResponseEntity<FarmResponseDTO> createFarm(@RequestBody @Valid FarmRequestDTO farmRequestDTO) {
+    public ResponseEntity<FarmResponseDTO> createFarm(@Valid @RequestBody  FarmRequestDTO farmRequestDTO) {
         FarmResponseDTO createdFarm = farmService.create(farmRequestDTO);
-        return new ResponseEntity<>(createdFarm, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdFarm);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<FarmResponseDTO> updateFarm(
             @PathVariable Long id,
-            @RequestBody FarmRequestDTO farmRequestDTO) {
-        try {
+            @Valid @RequestBody FarmRequestDTO farmRequestDTO){
             FarmResponseDTO updatedFarm = farmService.update(id, farmRequestDTO);
-            return ResponseEntity.ok(updatedFarm);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+            return ResponseEntity.status(HttpStatus.OK).body(updatedFarm);
     }
 
 

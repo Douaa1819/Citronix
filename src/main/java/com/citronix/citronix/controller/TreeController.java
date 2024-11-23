@@ -5,6 +5,7 @@ import com.citronix.citronix.dto.response.TreeResponseDTO;
 import com.citronix.citronix.service.TreeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,8 +22,10 @@ public class TreeController {
     private final TreeService treeService;
 
     @GetMapping
-    public ResponseEntity<List<TreeResponseDTO>> getAllTrees() {
-        List<TreeResponseDTO> trees = treeService.findAll();
+    public ResponseEntity<Page<TreeResponseDTO>> getAllTrees(
+            @RequestParam(defaultValue = "0") Integer pageNum,
+        @RequestParam(defaultValue = "10")Integer size){
+        Page<TreeResponseDTO> trees = treeService.findAll(pageNum,size);
         return ResponseEntity.ok(trees);
     }
 

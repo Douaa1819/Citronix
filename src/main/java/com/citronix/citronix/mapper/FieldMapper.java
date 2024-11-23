@@ -1,8 +1,7 @@
 package com.citronix.citronix.mapper;
 
 import com.citronix.citronix.dto.request.FieldRequestDTO;
-import com.citronix.citronix.dto.response.FarmFieldResponseDTO;
-import com.citronix.citronix.dto.response.FarmResponseDTO;
+import com.citronix.citronix.dto.response.EmbeddedFarmFieldResponseDTO;
 import com.citronix.citronix.dto.response.FieldResponseDTO;
 import com.citronix.citronix.dto.response.TreeResponseDTO;
 import com.citronix.citronix.entity.Farm;
@@ -12,7 +11,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface FieldMapper {
@@ -28,7 +26,7 @@ public interface FieldMapper {
     TreeResponseDTO toTreeResponseDTO(Tree tree);
     List<TreeResponseDTO> toTreeResponseDTOs(List<Tree> trees);
 
-    FarmFieldResponseDTO toResponse(Farm farm);
+    EmbeddedFarmFieldResponseDTO toResponse(Farm farm);
 
 
 

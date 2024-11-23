@@ -20,14 +20,13 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class Farm {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name is required ")
+    @NotBlank(message = "Name is required")
     @Column(unique = true, nullable = false)
     private String name;
 
@@ -35,31 +34,24 @@ public class Farm {
     @Column(nullable = false)
     private String location;
 
-    @NotNull(message = "Total area is required ")
-    @Positive
+    @NotNull(message = "Total area is required")
+    @Positive(message = "Total area must be positive")
     @Column(nullable = false)
     private Double totalArea;
 
-    @NotNull
-    @PastOrPresent(message = "The date must be in the past or in the present ")
+    @NotNull(message = "Creation date is required")
+    @PastOrPresent(message = "The date must be in the past or in the present")
     @Column(nullable = false)
     private LocalDate creationDate;
+
 
 
     @OneToMany(mappedBy = "farm", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Field> fields = new ArrayList<>();
 
+    @OneToMany(mappedBy = "farm")
+    private List<Harvest> harvests = new ArrayList<>();
 
-
-    @Transient
-    public Double calculateFieldsTotalArea() {
-        if (fields == null || fields.isEmpty()) {
-            return 0.0;
-        }
-        return fields.stream()
-                .mapToDouble(Field::getArea)
-                .sum();
-    }
 
 
 }

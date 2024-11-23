@@ -8,7 +8,7 @@ public record FarmResponseDTO(
         String location,
         Double totalArea,
         LocalDate creationDate,
-       List<FieldFarmResponseDTO> fields
+       List<EmbeddedFieldFarmResponseDTO> fields
 ) {
 
 }

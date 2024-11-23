@@ -5,7 +5,7 @@ import com.citronix.citronix.dto.response.SaleResponseDTO;
 import com.citronix.citronix.entity.Harvest;
 import com.citronix.citronix.entity.HarvestDetails;
 import com.citronix.citronix.entity.Sale;
-import com.citronix.citronix.exception.EntityNotFoundException;
+import com.citronix.citronix.common.exception.EntityNotFoundException;
 import com.citronix.citronix.mapper.SaleMapper;
 import com.citronix.citronix.repository.HarvestRepository;
 import com.citronix.citronix.repository.SaleRepository;
@@ -32,7 +32,7 @@ public class SaleServiceImpl implements SaleService {
         Sale sale = saleMapper.toEntity(requestDTO);
 
         Harvest harvest = harvestRepository.findById(requestDTO.harvestId())
-                .orElseThrow(() -> new EntityNotFoundException("Harvest not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Harvest ",requestDTO.harvestId()));
 
 
         double actualTotalQuantity = calculateTotalQuantity(harvest);
@@ -60,7 +60,7 @@ public class SaleServiceImpl implements SaleService {
     @Override
     public SaleResponseDTO getSaleById(Long id) {
         Sale sale = saleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Sale not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Sale",id));
         return saleMapper.toDTO(sale);
     }
 
@@ -75,12 +75,12 @@ public class SaleServiceImpl implements SaleService {
     @Transactional
     public SaleResponseDTO updateSale(Long id, SaleRequestDTO requestDTO) {
         Sale existingSale = saleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Sale not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Sale",id));
 
         Double quantityDifference = requestDTO.quantity() - existingSale.getQuantity();
 
         Harvest harvest = harvestRepository.findById(requestDTO.harvestId())
-                .orElseThrow(() -> new EntityNotFoundException("Harvest not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Harvest",id));
 
         if (harvest.getTotalQuantity() < quantityDifference) {
             throw new IllegalArgumentException("Insufficient quantity available in harvest"+ harvest.getTotalQuantity());
@@ -102,7 +102,7 @@ public class SaleServiceImpl implements SaleService {
 @Transactional
    public void deleteSale(Long id) {
         Sale sale = saleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Sale not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Sale",id));
         Harvest harvest = sale.getHarvest();
         harvest.setTotalQuantity(harvest.getTotalQuantity() + sale.getQuantity());
         harvestRepository.save(harvest);

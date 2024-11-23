@@ -11,6 +11,8 @@ import com.citronix.citronix.service.HarvestService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,10 +31,9 @@ public class HarvestServiceImpl implements HarvestService {
 
 
     @Override
-    public List<HarvestResponseDTO> findAll() {
-        return harvestRepository.findAll().stream()
-                .map(harvest -> harvestMapper.toResponseDTO(harvest))
-                .collect(Collectors.toList());
+    public Page<HarvestResponseDTO> findAll(int page, int size) {
+        return harvestRepository.findAll(PageRequest.of(page,size))
+                .map( harvestMapper::toResponseDTO);
     }
 
 

@@ -5,6 +5,7 @@ import com.citronix.citronix.dto.response.HarvestResponseDTO;
 import com.citronix.citronix.service.HarvestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,8 +28,10 @@ public class HarvestController {
      */
 
     @GetMapping
-    public ResponseEntity<List<HarvestResponseDTO>> getAllHarvests() {
-        List<HarvestResponseDTO> harvests = harvestService.findAll();
+    public ResponseEntity<Page<HarvestResponseDTO>> getAllHarvests(
+            @RequestParam(defaultValue = "0") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize){
+        Page<HarvestResponseDTO> harvests = harvestService.findAll(pageNum,pageSize);
         return ResponseEntity.ok(harvests);
     }
 

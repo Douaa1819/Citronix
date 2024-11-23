@@ -1,9 +1,8 @@
 package com.citronix.citronix.dto.response;
 
 import java.time.LocalDate;
-import java.util.List;
 
-public record FarmFieldResponseDTO(
+public record EmbeddedFarmFieldResponseDTO(
     Long id,
     String name,
     String location,
