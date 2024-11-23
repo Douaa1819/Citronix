@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/fields")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 @Validated
 public class FieldController {
 
@@ -38,7 +38,7 @@ public class FieldController {
     }
 
     @PostMapping
-    public ResponseEntity<FieldResponseDTO> createField(@RequestBody @Valid FieldRequestDTO fieldRequestDTO) {
+    public ResponseEntity<FieldResponseDTO> createField(@Valid @RequestBody FieldRequestDTO fieldRequestDTO) {
         FieldResponseDTO createdField = fieldService.create(fieldRequestDTO);
         return new ResponseEntity<>(createdField, HttpStatus.CREATED);
     }
@@ -46,9 +46,9 @@ public class FieldController {
     @PutMapping("/{id}")
     public ResponseEntity<FieldResponseDTO> updateField(
             @PathVariable Long id,
-            @RequestBody FieldRequestDTO fieldRequestDTO) {
+            @Valid @RequestBody FieldRequestDTO fieldRequestDTO) {
         FieldResponseDTO updatedField = fieldService.update(id, fieldRequestDTO);
-        return ResponseEntity.ok(updatedField);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedField);
     }
 
     @DeleteMapping("/{id}")
