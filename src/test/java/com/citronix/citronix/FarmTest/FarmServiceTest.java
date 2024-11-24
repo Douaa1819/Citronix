@@ -49,10 +49,10 @@ class FarmServiceImplTest {
         @Test
         @DisplayName("Should create a farm successfully")
         void shouldCreateFarmSuccessfully() {
-            FarmRequestDTO requestDTO = new FarmRequestDTO("Farm Douaa", "Location Douaa", 3000.0, LocalDate.now());
-            Farm farm = new Farm(null, "Farm Douaa", "Location Douaa", 3000.0, LocalDate.now(), List.of(), List.of());
-            Farm savedFarm = new Farm(1L, "Farm Douaa", "Location Douaa", 3000.0, LocalDate.now(), List.of(), List.of());
-            FarmResponseDTO responseDTO = new FarmResponseDTO(1L, "Farm Douaa", "Location Douaa", 3000.0, LocalDate.now(), List.of());
+            FarmRequestDTO requestDTO = new FarmRequestDTO("Farm Douaa", "Location Douaa", 3.0, LocalDate.now());
+            Farm farm = new Farm(null, "Farm Douaa", "Location Douaa", 3.0, LocalDate.now(), List.of(), List.of());
+            Farm savedFarm = new Farm(1L, "Farm Douaa", "Location Douaa", 3.0, LocalDate.now(), List.of(), List.of());
+            FarmResponseDTO responseDTO = new FarmResponseDTO(1L, "Farm Douaa", "Location Douaa", 3.0, LocalDate.now(), List.of());
 
             when(farmMapper.toEntity(requestDTO)).thenReturn(farm);
             when(farmRepository.save(farm)).thenReturn(savedFarm);
@@ -68,7 +68,7 @@ class FarmServiceImplTest {
         @Test
         @DisplayName("Should throw exception when total area is below 2000")
         void shouldThrowExceptionWhenTotalAreaBelow2000() {
-            FarmRequestDTO requestDTO = new FarmRequestDTO("Farm B", "Location B", 1500.0, LocalDate.now());
+            FarmRequestDTO requestDTO = new FarmRequestDTO("Farm B", "Location B", 1.5, LocalDate.now());
 
             assertThrows(EntityConstraintViolationException.class, () -> farmService.create(requestDTO));
         }
@@ -82,10 +82,10 @@ class FarmServiceImplTest {
         @DisplayName("Should update farm successfully")
         void shouldUpdateFarmSuccessfully() {
             Long id = 1L;
-            FarmRequestDTO requestDTO = new FarmRequestDTO("Updated Farm", "Updated Location", 4000.0, LocalDate.now());
-            Farm existingFarm = new Farm(id, "Old Farm", "Old Location", 3000.0, LocalDate.now(), List.of(), List.of());
-            Farm updatedFarm = new Farm(id, "Updated Farm", "Updated Location", 4000.0, LocalDate.now(), List.of(), List.of());
-            FarmResponseDTO responseDTO = new FarmResponseDTO(id, "Updated Farm", "Updated Location", 4000.0, LocalDate.now(), List.of());
+            FarmRequestDTO requestDTO = new FarmRequestDTO("Updated Farm", "Updated Location", 4.0, LocalDate.now());
+            Farm existingFarm = new Farm(id, "Old Farm", "Old Location", 3.0, LocalDate.now(), List.of(), List.of());
+            Farm updatedFarm = new Farm(id, "Updated Farm", "Updated Location", 4.0, LocalDate.now(), List.of(), List.of());
+            FarmResponseDTO responseDTO = new FarmResponseDTO(id, "Updated Farm", "Updated Location", 4.0, LocalDate.now(), List.of());
 
             when(farmRepository.findById(id)).thenReturn(Optional.of(existingFarm));
             when(farmRepository.save(existingFarm)).thenReturn(updatedFarm);
@@ -101,7 +101,7 @@ class FarmServiceImplTest {
         @DisplayName("Should throw exception when farm is not found")
         void shouldThrowExceptionWhenFarmNotFound() {
             Long id = 1L;
-            FarmRequestDTO requestDTO = new FarmRequestDTO("Updated Farm", "Updated Location", 4000.0, LocalDate.now());
+            FarmRequestDTO requestDTO = new FarmRequestDTO("Updated Farm", "Updated Location", 4.0, LocalDate.now());
 
             when(farmRepository.findById(id)).thenReturn(Optional.empty());
 
@@ -117,7 +117,7 @@ class FarmServiceImplTest {
         @DisplayName("Should delete farm successfully")
         void shouldDeleteFarmSuccessfully() {
             Long id = 1L;
-            Farm farm = new Farm(id, "Farm A", "Location A", 3000.0, LocalDate.now(), List.of(), List.of());
+            Farm farm = new Farm(id, "Farm A", "Location A", 3.0, LocalDate.now(), List.of(), List.of());
 
             when(farmRepository.findById(id)).thenReturn(Optional.of(farm));
             doNothing().when(farmRepository).delete(farm);
@@ -146,8 +146,8 @@ class FarmServiceImplTest {
         @DisplayName("Should return list of farms matching query")
         void shouldReturnListOfMatchingFarms() {
             String query = "Farm A";
-            Farm farm = new Farm(1L, "Farm A", "Location A", 3000.0, LocalDate.now(), List.of(), List.of());
-            FarmResponseDTO responseDTO = new FarmResponseDTO(1L, "Farm A", "Location A", 3000.0, LocalDate.now(), List.of());
+            Farm farm = new Farm(1L, "Farm A", "Location A", 3.0, LocalDate.now(), List.of(), List.of());
+            FarmResponseDTO responseDTO = new FarmResponseDTO(1L, "Farm A", "Location A", 3.0, LocalDate.now(), List.of());
 
             when(searchRepository.findFarmMultiCriteriaSearch(query)).thenReturn(List.of(farm));
             when(farmMapper.toResponseDTO(farm)).thenReturn(responseDTO);

@@ -78,8 +78,8 @@ public class FarmServiceImpl implements FarmService {
     @Override
     public FarmResponseDTO create(FarmRequestDTO farmRequestDTO) {
 
-        if (farmRequestDTO.totalArea() < 2000) {
-            throw new EntityConstraintViolationException("Farm", "Surface", farmRequestDTO.totalArea(), "Farm surface must be at least 2,000 m².");
+        if (farmRequestDTO.totalArea() < 2) {
+            throw new EntityConstraintViolationException("Farm", "Surface", farmRequestDTO.totalArea(), "Farm surface must be at least 2 hectare.");
         }
         Farm farm = farmMapper.toEntity(farmRequestDTO);
         Farm savedFarm = farmRepository.save(farm);
@@ -103,12 +103,12 @@ public class FarmServiceImpl implements FarmService {
 
     @Override
     public FarmResponseDTO update(Long id, FarmRequestDTO farmRequestDTO) {
-        if (farmRequestDTO.totalArea() < 2000) {
+        if (farmRequestDTO.totalArea() < 2) {
             throw new EntityConstraintViolationException(
                     "Farm",
                     "Total Area",
                     farmRequestDTO.totalArea(),
-                    "Farm surface must be at least 2,000 m²."
+                    "Farm surface must be at least 2 hectare."
             );
         }
 

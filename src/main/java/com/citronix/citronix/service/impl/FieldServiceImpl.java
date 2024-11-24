@@ -52,25 +52,34 @@ public class FieldServiceImpl implements FieldService {
                 .orElseThrow(() -> new EntityNotFoundException("Farm  ", fieldRequestDTO.farmId()));
 
 
+        double farmTotalAreaInSquareMeters = farm.getTotalArea() * 10000;
         // Validate minimum field size (1,000 m²)
         if (fieldRequestDTO.area() < 1000) {
             throw new EntityConstraintViolationException("Field", "area", fieldRequestDTO.area(), "Field area must be at least 1,000 m²");
         }
 
         // Validate if the new area exceeds 50% of the farm's total area
-        if (fieldRequestDTO.area() > farm.getTotalArea() * 0.5) {
+        if (fieldRequestDTO.area() > farmTotalAreaInSquareMeters * 0.5) {
             throw new EntityConstraintViolationException("Field", "area", fieldRequestDTO.area(), "Field area cannot exceed 50% of the farm's total area");
         }
 
         if (farm.getFields().size() >= 10) {
             throw new EntityConstraintViolationException("Farm", "fields", farm.getFields().size(), "A farm cannot have more than 10 fields");
         }
-
-
-        double newFieldSurface = fieldRequestDTO.area();
-        validateTotalFarmSurface(farm, newFieldSurface, null);
-
         Field field = fieldMapper.toEntity(fieldRequestDTO);
+
+
+
+        double totalFieldSurface = farm.getFields().stream()
+                .mapToDouble(Field::getArea)
+                .sum() + field.getArea();
+
+
+        if (totalFieldSurface > farmTotalAreaInSquareMeters) {
+            throw new EntityConstraintViolationException("Farm", "fields", farm.getTotalArea(), "The total surface of all fields cannot exceed the farm's surface");
+        }
+
+
         field.setFarm(farm);
 
         Field savedField = fieldRepository.save(field);
@@ -86,23 +95,54 @@ public class FieldServiceImpl implements FieldService {
         Farm farm = farmRepository.findById(fieldRequestDTO.farmId())
                 .orElseThrow(() -> new EntityNotFoundException("Farm", fieldRequestDTO.farmId()));
 
-        if (fieldRequestDTO.area() < 1000) {
-            throw new EntityConstraintViolationException("Field", "area", fieldRequestDTO.area(), "Field area must be at least 1,000 m²");
-        }
 
-        if (fieldRequestDTO.area() > farm.getTotalArea() * 0.5) {
-            throw new EntityConstraintViolationException("Field", "area", fieldRequestDTO.area(), "Field area cannot exceed 50% of the farm's total area");
-        }
+        double farmTotalAreaInSquareMeters = farm.getTotalArea() * 10000;
 
-        double newFieldSurface = fieldRequestDTO.area();
-        validateTotalFarmSurface(farm, newFieldSurface, existingField.getId());
+
+        validateFieldConstraints(fieldRequestDTO, farmTotalAreaInSquareMeters);
+
+        validateTotalFarmSurface(farm, fieldRequestDTO.area(), existingField.getId());
+
 
         updateFieldProperties(existingField, farm, fieldRequestDTO);
+
 
         Field updatedField = fieldRepository.save(existingField);
         return fieldMapper.toResponseDTO(updatedField);
     }
 
+
+    private void validateFieldConstraints(FieldRequestDTO fieldRequestDTO, double farmTotalAreaInSquareMeters) {
+
+        if (fieldRequestDTO.area() < 1000) {
+            throw new EntityConstraintViolationException("Field", "area", fieldRequestDTO.area(),
+                    "Field area must be at least 1,000 m²");
+        }
+
+
+        if (fieldRequestDTO.area() > farmTotalAreaInSquareMeters * 0.5) {
+            throw new EntityConstraintViolationException("Field", "area", fieldRequestDTO.area(),
+                    "Field area cannot exceed 50% of the farm's total area");
+        }
+    }
+
+
+    private void validateTotalFarmSurface(Farm farm, double newFieldSurface, Long excludeFieldId) {
+
+        double farmTotalAreaInSquareMeters = farm.getTotalArea() * 10000;
+
+        double totalFieldSurface = farm.getFields().stream()
+                .filter(field -> excludeFieldId == null || !field.getId().equals(excludeFieldId))
+                .mapToDouble(Field::getArea)
+                .sum() + newFieldSurface;
+
+
+        if (totalFieldSurface > farmTotalAreaInSquareMeters) {
+            throw new EntityConstraintViolationException("Farm", "Surface", totalFieldSurface,
+                    String.format("The total surface of all fields (%.2f m²) cannot exceed the farm's surface (%.2f m²).",
+                            totalFieldSurface, farmTotalAreaInSquareMeters));
+        }
+    }
     private void updateFieldProperties(Field field, Farm farm, FieldRequestDTO dto) {
         if (!field.getFarm().equals(farm)) {
             field.setFarm(farm);
@@ -119,18 +159,5 @@ public class FieldServiceImpl implements FieldService {
         fieldRepository.delete(field);
     }
 
-    private void validateTotalFarmSurface(Farm farm, double newFieldSurface, Long excludeFieldId) {
-
-        double totalFieldSurface = farm.getFields().stream()
-                .filter(field -> excludeFieldId == null || !field.getId().equals(excludeFieldId))
-                .mapToDouble(Field::getArea)
-                .sum() + newFieldSurface;
-
-        if (farm.getTotalArea() < totalFieldSurface) {
-            throw new EntityConstraintViolationException("Farm", "Surface", totalFieldSurface,
-                    String.format("The total surface of all fields cannot exceed the farm's surface .",
-                            farm.getTotalArea()));
-        }
-    }
 
 }
