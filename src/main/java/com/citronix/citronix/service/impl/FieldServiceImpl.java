@@ -133,4 +133,9 @@ public class FieldServiceImpl implements FieldService {
         }
     }
 
+    @Override
+    public Field findFieldById( Long id ) {
+        return fieldRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("field", id));
+
+    }
 }

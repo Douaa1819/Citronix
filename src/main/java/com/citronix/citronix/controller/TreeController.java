@@ -5,6 +5,7 @@ import com.citronix.citronix.dto.response.TreeResponseDTO;
 import com.citronix.citronix.service.TreeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/trees")
 @RequiredArgsConstructor
@@ -32,14 +34,22 @@ public class TreeController {
     @GetMapping("/{id}")
     public ResponseEntity<TreeResponseDTO> getTreeById(@PathVariable Long id) {
         TreeResponseDTO tree = treeService.findById(id);
-        return ResponseEntity.ok(tree);
+        return ResponseEntity.status(HttpStatus.OK).body(tree);
     }
 
-    @PostMapping
-    public ResponseEntity<TreeResponseDTO> createTree(@RequestBody @Valid TreeRequestDTO treeRequestDTO) {
-        TreeResponseDTO createdTree = treeService.create(treeRequestDTO);
+    @PostMapping("/{fieldId}")
+    public ResponseEntity<TreeResponseDTO> createTree(
+            @PathVariable Long fieldId,
+            @Valid @RequestBody TreeRequestDTO treeRequestDTO) {
+
+        TreeRequestDTO updatedTreeRequestDTO = new TreeRequestDTO(treeRequestDTO.plantingDate(), fieldId);
+
+        TreeResponseDTO createdTree = treeService.create(updatedTreeRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTree);
     }
+
+
+
 
     @PutMapping("/{id}")
     public ResponseEntity<TreeResponseDTO> updateTree(
