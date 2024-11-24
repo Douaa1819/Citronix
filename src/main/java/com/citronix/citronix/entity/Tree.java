@@ -1,12 +1,15 @@
 package com.citronix.citronix.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import java.time.Period;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -33,12 +36,25 @@ public class Tree {
     @NotNull
     private Field field;
 
+    @Transient
+    private int age;
+
     @OneToMany(mappedBy = "tree", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
+
     private List<HarvestDetails> harvestDetails = new ArrayList<>();
 
-    public Integer getAge(){
-        return (int) ChronoUnit.YEARS.between(this.getPlantingDate(), LocalDate.now());
+    public int getAge(){
+        return calculateAge();
+    }
+
+    private int calculateAge() {
+        LocalDate thiscurrentDate = LocalDate.now();
+        assert plantingDate != null;
+
+        Period period = Period.between(plantingDate, thiscurrentDate);
+        int years = period.getYears();
+        int months = period.getMonths();
+        return years + (months / 12);
     }
 
     public Double getProductivity() {

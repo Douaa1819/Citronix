@@ -4,15 +4,14 @@ import com.citronix.citronix.dto.request.TreeRequestDTO;
 import com.citronix.citronix.dto.response.TreeResponseDTO;
 import com.citronix.citronix.entity.Tree;
 import org.mapstruct.Mapper;
-
-import java.util.List;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface TreeMapper {
 
+    @Mapping(target = "age", expression = "java(tree.getAge())")
+    @Mapping(target = "productivite", expression = "java(tree.getProductivity())")
     TreeResponseDTO toResponseDTO(Tree tree);
-
-    List<TreeResponseDTO> toResponseDTOs(List<Tree> trees);
 
     Tree toEntity(TreeRequestDTO treeRequestDTO);
 

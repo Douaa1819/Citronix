@@ -15,7 +15,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface FieldMapper {
 
-    @Mapping(target = "trees", source = "trees")
     @Mapping(target = "farm", source = "farm")
     FieldResponseDTO toResponseDTO(Field field);
     Field toEntity(FieldRequestDTO fieldRequestDTO);
