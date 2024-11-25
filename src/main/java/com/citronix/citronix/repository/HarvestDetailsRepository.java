@@ -13,8 +13,9 @@ import java.util.List;
 @Repository
 public interface HarvestDetailsRepository extends JpaRepository<HarvestDetails, Long> {
     void deleteByHarvestId(Long harvestId);
-    List<HarvestDetails> findAll();
-    List<HarvestDetails> findByTreeAndHarvestSeason(Tree tree, Season season);
-List<HarvestDetails> findByTree_Field_Farm_IdAndAndHarvest_Season(Long farm, Season season);
 
+    List<HarvestDetails> findAll();
+    List<HarvestDetails> findByTree_Field_Farm_IdAndAndHarvest_Season(Long farm, Season season);
+    List<HarvestDetails> findByTreeAndHarvestSeason(Tree tree, Season season);
 }
+

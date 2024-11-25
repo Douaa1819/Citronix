@@ -16,8 +16,8 @@ public record HarvestRequestDTO(
     @NotNull(message = "Season is required")
      Season season,
 
-        @NotNull(message = "Field ID is required")
-            Long fieldId
+    @NotNull(message = "Field ID is required")
+    Long fieldId
 
 )
 {

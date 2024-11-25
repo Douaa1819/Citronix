@@ -5,6 +5,7 @@ import com.citronix.citronix.entity.enums.Season;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +28,7 @@ public class Harvest {
     private Long id;
 
     @NotNull(message = "Harvest date required ")
+    @PastOrPresent
     @Column(name = "harvest_date", nullable = false)
     private LocalDate harvestDate;
 
