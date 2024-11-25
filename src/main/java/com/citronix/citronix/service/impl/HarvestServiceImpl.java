@@ -8,7 +8,7 @@ import com.citronix.citronix.repository.FieldRepository;
 import com.citronix.citronix.repository.HarvestDetailsRepository;
 import com.citronix.citronix.repository.HarvestRepository;
 import com.citronix.citronix.service.HarvestService;
-import jakarta.persistence.EntityNotFoundException;
+import com.citronix.citronix.common.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,7 +40,7 @@ public class HarvestServiceImpl implements HarvestService {
     @Override
     public HarvestResponseDTO findById(Long id) {
         Harvest harvest = harvestRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Harvest not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Harvest" , id));
         return harvestMapper.toResponseDTO(harvest);
     }
 
@@ -48,16 +48,17 @@ public class HarvestServiceImpl implements HarvestService {
     @Override
     public HarvestResponseDTO create(HarvestRequestDTO harvestRequestDTO) {
 
-        validateNewHarvest(harvestRequestDTO);
         Field field = fieldRepository.findById(harvestRequestDTO.fieldId())
-                .orElseThrow(() -> new EntityNotFoundException("Field not found with ID: " + harvestRequestDTO.fieldId()));
+                .orElseThrow(() -> new EntityNotFoundException("Field " , harvestRequestDTO.fieldId()));
 
 
         Harvest harvest = harvestMapper.toEntity(harvestRequestDTO);
+        validateNewHarvest(harvestRequestDTO);
+        populateHarvestDetails(harvest, field.getTrees());
         Harvest savedHarvest = harvestRepository.save(harvest);
 
 
-        populateHarvestDetails(savedHarvest, field.getTrees());
+
         return harvestMapper.toResponseDTO(savedHarvest);
     }
 
@@ -66,7 +67,7 @@ public class HarvestServiceImpl implements HarvestService {
     @Override
     public HarvestResponseDTO update(Long id, HarvestRequestDTO harvestRequestDTO) {
         Harvest existingHarvest = harvestRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Harvest not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Harvest" , id));
 
 
         validateSeasonForUpdate(harvestRequestDTO.season(), id);
@@ -76,7 +77,7 @@ public class HarvestServiceImpl implements HarvestService {
 
 
         Field field = fieldRepository.findById(harvestRequestDTO.fieldId())
-                .orElseThrow(() -> new EntityNotFoundException("Field not found with ID: " + harvestRequestDTO.fieldId()));
+                .orElseThrow(() -> new EntityNotFoundException("Field" , harvestRequestDTO.fieldId()));
 
         List<Tree> trees = field.getTrees();
 
@@ -102,7 +103,7 @@ public class HarvestServiceImpl implements HarvestService {
     public void delete(Long id) {
 
         Harvest harvest = harvestRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Harvest not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Harvest" , id));
 
 
         harvestDetailsRepository.deleteByHarvestId(id);
@@ -139,7 +140,7 @@ public class HarvestServiceImpl implements HarvestService {
 
 
     private void validateNewHarvest(HarvestRequestDTO requestDTO) {
-        Field field = fieldRepository.findById(requestDTO.fieldId()).orElseThrow(()->new EntityNotFoundException("fild not found"));
+        Field field = fieldRepository.findById(requestDTO.fieldId()).orElseThrow(()->new EntityNotFoundException("Field",requestDTO.fieldId()));
 
         List<HarvestDetails> existingHarvests = harvestDetailsRepository.findByTree_Field_Farm_IdAndAndHarvest_Season(field.getFarm().getId(),requestDTO.season());
 
@@ -191,17 +192,6 @@ public class HarvestServiceImpl implements HarvestService {
 
 
 
-//
-//    public Double calculateTotalQuantityByField(Long fieldId) {
-//        List<Harvest> harvests = harvestRepository.findByFieldId(fieldId);
-//
-//        double totalQuantity = harvests.stream()
-//                .flatMap(harvest -> harvest.getHarvestDetails().stream())
-//                .mapToDouble(HarvestDetails::getQuantity)
-//                .sum();
-//
-//        return totalQuantity;
-//    }
 
 
 }
