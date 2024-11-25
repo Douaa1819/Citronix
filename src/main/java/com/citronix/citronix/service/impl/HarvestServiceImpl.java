@@ -215,11 +215,6 @@ public class HarvestServiceImpl implements HarvestService {
         }
     }
 
-
-    @Override
-    public Harvest findEntityById(Long id) {
-        return harvestRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-    }
 }
 
 

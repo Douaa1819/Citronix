@@ -7,16 +7,7 @@ import com.citronix.citronix.service.comman.CrudService;
 
 import java.util.List;
 
-public interface SaleService {
+public interface SaleService extends CrudService<Long,SaleRequestDTO,SaleResponseDTO> {
 
-    SaleResponseDTO createSale(SaleRequestDTO requestDTO);
-
-    SaleResponseDTO getSaleById(Long id);
-
-    List<SaleResponseDTO> getAllSales();
-
-    SaleResponseDTO updateSale(Long id, SaleRequestDTO requestDTO);
-
-    void deleteSale(Long id);
     Double calculateRevenue(Long harvestId);
 }

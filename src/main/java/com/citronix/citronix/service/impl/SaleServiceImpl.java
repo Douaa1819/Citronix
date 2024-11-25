@@ -12,12 +12,14 @@ import com.citronix.citronix.repository.SaleRepository;
 import com.citronix.citronix.service.SaleService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class SaleServiceImpl implements SaleService {
@@ -27,8 +29,7 @@ public class SaleServiceImpl implements SaleService {
     private final SaleMapper saleMapper;
 
     @Override
-    @Transactional
-    public SaleResponseDTO createSale(SaleRequestDTO requestDTO) {
+    public SaleResponseDTO create(SaleRequestDTO requestDTO) {
         Sale sale = saleMapper.toEntity(requestDTO);
 
         Harvest harvest = harvestRepository.findById(requestDTO.harvestId())
@@ -58,22 +59,23 @@ public class SaleServiceImpl implements SaleService {
                 .sum();
     }
     @Override
-    public SaleResponseDTO getSaleById(Long id) {
+    public SaleResponseDTO findById(Long id) {
         Sale sale = saleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Sale",id));
         return saleMapper.toDTO(sale);
     }
 
     @Override
-    public List<SaleResponseDTO> getAllSales() {
-        return saleRepository.findAll().stream()
-                .map(saleMapper::toDTO)
-                .collect(Collectors.toList());
+    public Page<SaleResponseDTO>findAll(
+            int page,
+            int size
+    ) {
+        return saleRepository.findAll(PageRequest.of(page, size))
+                .map(saleMapper::toDTO);
     }
 
     @Override
-    @Transactional
-    public SaleResponseDTO updateSale(Long id, SaleRequestDTO requestDTO) {
+    public SaleResponseDTO update(Long id, SaleRequestDTO requestDTO) {
         Sale existingSale = saleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Sale",id));
 
@@ -100,7 +102,7 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
 @Transactional
-   public void deleteSale(Long id) {
+   public void delete(Long id) {
         Sale sale = saleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Sale",id));
         Harvest harvest = sale.getHarvest();

@@ -8,5 +8,4 @@ import com.citronix.citronix.entity.Harvest;
 import com.citronix.citronix.service.comman.CrudService;
 
 public interface HarvestService extends CrudService<Long, HarvestRequestDTO, HarvestResponseDTO> {
-    Harvest findEntityById (Long id );
 }
