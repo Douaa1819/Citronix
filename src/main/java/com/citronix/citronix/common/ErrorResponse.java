@@ -1,4 +1,4 @@
-package com.citronix.citronix.common.exception;
+package com.citronix.citronix.common;
 
 import java.time.LocalDateTime;
 
