@@ -39,7 +39,7 @@ public class Tree {
     @Transient
     private int age;
 
-    @OneToMany(mappedBy = "tree", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "tree", cascade = CascadeType.ALL)
 
     private List<HarvestDetails> harvestDetails = new ArrayList<>();
 

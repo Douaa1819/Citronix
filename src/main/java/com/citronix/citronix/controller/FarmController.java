@@ -2,7 +2,6 @@ package com.citronix.citronix.controller;
 
 import com.citronix.citronix.dto.request.FarmRequestDTO;
 import com.citronix.citronix.dto.response.FarmResponseDTO;
-import com.citronix.citronix.common.exception.EntityNotFoundException;
 import com.citronix.citronix.service.FarmService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

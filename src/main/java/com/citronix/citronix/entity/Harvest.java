@@ -43,7 +43,7 @@ public class Harvest {
     @ManyToOne
     private Farm farm;
 
-    @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL ,orphanRemoval= true)
+    @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<HarvestDetails> harvestDetails = new ArrayList<>();
 
