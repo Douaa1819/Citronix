@@ -107,8 +107,7 @@ public class FieldServiceImpl implements FieldService {
         updateFieldProperties(existingField, farm, fieldRequestDTO);
 
 
-        Field updatedField = fieldRepository.save(existingField);
-        return fieldMapper.toResponseDTO(updatedField);
+        return fieldMapper.toResponseDTO(existingField);
     }
 
 

@@ -14,10 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @Transactional
@@ -103,11 +102,10 @@ public class HarvestServiceImpl implements HarvestService {
 
         Harvest harvest = harvestRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Harvest" , id));
-
-
         harvestDetailsRepository.deleteByHarvestId(id);
         harvestRepository.delete(harvest);
     }
+
 
     private double populateHarvestDetails(Harvest harvest, List<Tree> trees) {
         double totalQuantity = 0.0;
@@ -132,7 +130,6 @@ public class HarvestServiceImpl implements HarvestService {
             totalQuantity += treeProductivity;
             harvest.setTotalQuantity(totalQuantity);
         }
-
         return totalQuantity;
     }
 

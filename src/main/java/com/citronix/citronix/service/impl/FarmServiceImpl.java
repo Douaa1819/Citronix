@@ -128,9 +128,9 @@ public class FarmServiceImpl implements FarmService {
         if (farmRequestDTO.creationDate() != null) {
             farm.setCreationDate(farmRequestDTO.creationDate());
         }
-        Farm updatedFarm = farmRepository.save(farm);
 
-        return farmMapper.toResponseDTO(updatedFarm);
+
+        return farmMapper.toResponseDTO(farm);
     }
 
 

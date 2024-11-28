@@ -81,12 +81,10 @@ class TreeServiceImplTest {
                 .plantingDate(LocalDate.now().minusYears(3))
                 .build();
 
-        // Crée un mock ou une instance valide de EmbedeedTreeFieldResponseDTO
         EmbedeedTreeFieldResponseDTO fieldResponse = new EmbedeedTreeFieldResponseDTO(1L, "Field A", 100.0, null);
-
         TreeResponseDTO responseDTO = new TreeResponseDTO(treeId, LocalDate.now().minusYears(3), 3, 12.0, fieldResponse);
 
-        // Configure les mocks pour le test
+
         when(treeRepository.findById(treeId)).thenReturn(Optional.of(tree));
         when(treeMapper.toResponseDTO(tree)).thenReturn(responseDTO);
 
@@ -112,32 +110,6 @@ class TreeServiceImplTest {
         verify(treeRepository, times(1)).findById(treeId);
     }
 
-//    @Test
-//    void shouldCreateTreeSuccessfully() {
-//
-//        TreeRequestDTO requestDTO = new TreeRequestDTO(LocalDate.now().minusYears(2), 1L);
-//        Field field = Field.builder().id(1L).build();
-//        Tree tree = Tree.builder()
-//                .id(1L)
-//                .plantingDate(LocalDate.now().minusYears(2))
-//                .field(field)
-//                .build();
-//        EmbedeedTreeFieldResponseDTO fieldResponse = new EmbedeedTreeFieldResponseDTO(1L, "Field A", 100.0, null);
-//        TreeResponseDTO responseDTO = new TreeResponseDTO(1L, LocalDate.now().minusYears(2), 2, 12.0, fieldResponse);
-//
-//        when(fieldRepository.findById(1L)).thenReturn(Optional.of(field));
-//        when(treeMapper.toEntity(requestDTO)).thenReturn(tree);
-//        when(treeRepository.save(tree)).thenReturn(tree);
-//        when(treeMapper.toResponseDTO(tree)).thenReturn(responseDTO);
-//
-//
-//        TreeResponseDTO result = treeService.create(requestDTO);
-//
-//
-//        assertNotNull(result);
-//        assertEquals(1L, result.id());
-//        verify(treeRepository, times(1)).save(tree);
-//    }
 
     @Test
     void shouldThrowExceptionWhenFieldNotFound() {

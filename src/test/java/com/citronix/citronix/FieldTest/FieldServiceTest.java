@@ -56,11 +56,10 @@ class FieldServiceImplTest {
         field.setArea(validFieldRequestDTO.area());
         field.setName(validFieldRequestDTO.name());
 
-        // Initialisation de la ferme et des champs
+        // Initialize the farm and fields
         farm.setTotalArea(10.0);
         farm.setFields(new ArrayList<>());
 
-        // Mock des comportements
         when(farmRepository.findById(validFieldRequestDTO.farmId())).thenReturn(Optional.of(farm));
         when(fieldMapper.toEntity(validFieldRequestDTO)).thenReturn(field);
         when(fieldRepository.save(field)).thenReturn(field);
@@ -68,15 +67,14 @@ class FieldServiceImplTest {
                 1L, "Field 1", 5000.0, new ArrayList<>(), null
         ));
 
-        // Appel de la méthode
         FieldResponseDTO response = fieldService.create(validFieldRequestDTO);
 
-        // Assertions sur la réponse
         assertNotNull(response);
         assertEquals("Field 1", response.name());
         assertEquals(5000.0, response.area(), 0.001);
 
-        // Validation de la surface totale des champs
+        // Validation of the total surface area of the fields
+
         double totalFieldSurface = farm.getFields().stream().mapToDouble(Field::getArea).sum();
         double farmTotalAreaInSquareMeters = farm.getTotalArea() * 10000;
         assertTrue(totalFieldSurface <= farmTotalAreaInSquareMeters,
@@ -150,7 +148,7 @@ class FieldServiceImplTest {
 
     @Test
     void testCreateField_ExceedsFarmSurface() {
-        farm.setTotalArea(3.0); // 3 hectares
+        farm.setTotalArea(3.0);
         farm.setFields(new ArrayList<>());
 
 

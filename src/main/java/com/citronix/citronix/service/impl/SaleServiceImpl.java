@@ -96,8 +96,8 @@ public class SaleServiceImpl implements SaleService {
         harvest.setTotalQuantity(harvest.getTotalQuantity() - quantityDifference);
         harvestRepository.save(harvest);
 
-        Sale updatedSale = saleRepository.save(existingSale);
-        return saleMapper.toDTO(updatedSale);
+
+        return saleMapper.toDTO(existingSale);
     }
 
     @Override

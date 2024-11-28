@@ -73,8 +73,7 @@ public class TreeServiceImpl implements TreeService {
         existingTree.setPlantingDate(treeRequestDTO.plantingDate());
         existingTree.setField(field);
 
-        Tree updatedTree = treeRepository.save(existingTree);
-        return treeMapper.toResponseDTO(updatedTree);
+        return treeMapper.toResponseDTO(existingTree);
     }
 
     @Override
