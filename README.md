@@ -52,13 +52,4 @@ Use Maven to build and start the application
  mvn spring-boot:run
  ```
 
-## 📅 ​​Planning
-To track the planning and ongoing tasks, please visit our Jira dashboard: [Citronix Planning](https://douaa123.atlassian.net/jira/software/c/projects/CIT/boards/14/backlog)
-
-## 🎤 Presentation
-For a complete presentation of the project, see: [Citronix Presentation](https://www.canva.com/design/DAGUNfTqxDU/VvG_1ONTO8RF9ChLAAf9Bg/edit)
-
-## Class Diagram
-
-<img width="608" alt="image" src="https://github.com/user-attachments/assets/803cae73-6e91-4045-8e86-77276cff475b">
 
